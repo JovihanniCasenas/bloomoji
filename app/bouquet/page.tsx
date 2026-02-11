@@ -4,10 +4,13 @@ import Preview from "@/components/preview/Preview";
 import { COLOR_PALETTES } from "@/components/WrapperPicker";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import { Button } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 function BouquetContent() {
   const searchParams = useSearchParams();
   const configParam = searchParams.get("c");
+  const router = useRouter();
 
   let flowerCounts = {};
   let selectedPalette = COLOR_PALETTES[0];
@@ -34,7 +37,7 @@ function BouquetContent() {
 
   return (
     <main className="flex min-h-screen w-full flex-col items-center justify-center py-12 px-4">
-      <div className="max-w-2xl w-full">
+      <div className="max-w-2xl w-full flex flex-col justify-center">
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-2" style={{ color: "#5D4E37" }}>
             Someone just sent you a bouquet!
@@ -51,6 +54,19 @@ function BouquetContent() {
           message={message}
           isReceiver
         />
+        <div className="w-full flex justify-center">
+            <Button
+                variant="contained"
+                sx={{
+                    marginTop: 4,
+                    backgroundColor: "#8B7355",
+                    "&:hover": { backgroundColor: "#5D4E37" },
+                }}
+                onClick={() => router.push("/")}
+            >
+                Make your own
+            </Button>
+        </div>
       </div>
     </main>
   );
