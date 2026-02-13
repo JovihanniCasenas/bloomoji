@@ -102,6 +102,7 @@ export default function Home() {
           <div className="text-lg font-semibold">Ready? Share your bouquet!</div>
           <div className="flex gap-2">
             <Button
+              id="share-button"
               variant="contained"
               sx={{
                 backgroundColor: "#8B7355",
