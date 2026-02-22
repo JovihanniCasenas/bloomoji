@@ -4,6 +4,7 @@ import FlowerPicker from "@/components/FlowerPicker";
 import Preview from "@/components/preview/Preview";
 import WrapperPicker, { ColorPalette, COLOR_PALETTES } from "@/components/WrapperPicker";
 import Message from "@/components/Message";
+import { encodeConfig } from "@/lib/helpers/shareConfig";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
@@ -14,6 +15,7 @@ export default function Home() {
   const [flowerCounts, setFlowerCounts] = useState<Record<string, number>>({});
   const [selectedPalette, setSelectedPalette] = useState<ColorPalette>(COLOR_PALETTES[0]);
   const [message, setMessage] = useState("");
+  const [randomSeed, setRandomSeed] = useState(0);
   const [copied, setCopied] = useState(false);
 
   const generateShareableLink = () => {
@@ -26,9 +28,10 @@ export default function Home() {
         right: selectedPalette.rightFlapColor,
       },
       msg: message,
+      seed: randomSeed,
     };
     
-    const encoded = btoa(JSON.stringify(config));
+    const encoded = encodeConfig(config);
     const url = `${window.location.origin}/bouquet?c=${encoded}`;
     return url;
   };
@@ -70,6 +73,7 @@ export default function Home() {
               setFlowerCounts({});
               setSelectedPalette(COLOR_PALETTES[0]);
               setMessage("");
+              setRandomSeed(0);
             }}
           >
             Start Over
@@ -94,7 +98,15 @@ export default function Home() {
             )}
             {key === "wrapping" && <WrapperPicker selectedPalette={selectedPalette} onPaletteChange={setSelectedPalette} />}
             {key === "message" && <Message message={message} onChangedMessage={setMessage} />}
-            {key === "preview" && <Preview flowerCounts={flowerCounts} selectedPalette={selectedPalette} message={message} />}
+            {key === "preview" && (
+              <Preview
+                flowerCounts={flowerCounts}
+                selectedPalette={selectedPalette}
+                message={message}
+                randomSeed={randomSeed}
+                onRandomize={setRandomSeed}
+              />
+            )}
           </div>
         ))}
         

@@ -2,10 +2,23 @@
 
 import Preview from "@/components/preview/Preview";
 import { COLOR_PALETTES } from "@/components/WrapperPicker";
+import { decodeConfig } from "@/lib/helpers/shareConfig";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+
+type BouquetConfig = {
+  flowers?: Record<string, number>;
+  msg?: string;
+  seed?: number;
+  palette?: {
+    name: string;
+    dome: string;
+    left: string;
+    right: string;
+  };
+};
 
 function BouquetContent() {
   const searchParams = useSearchParams();
@@ -15,12 +28,14 @@ function BouquetContent() {
   let flowerCounts = {};
   let selectedPalette = COLOR_PALETTES[0];
   let message = "";
+  let randomSeed = 0;
 
   if (configParam) {
     try {
-      const decoded = JSON.parse(atob(configParam));
+      const decoded = decodeConfig<BouquetConfig>(configParam);
       flowerCounts = decoded.flowers || {};
       message = decoded.msg || "";
+      randomSeed = decoded.seed || 0;
       
       if (decoded.palette) {
         selectedPalette = {
@@ -52,6 +67,7 @@ function BouquetContent() {
           flowerCounts={flowerCounts}
           selectedPalette={selectedPalette}
           message={message}
+          randomSeed={randomSeed}
           isReceiver
         />
         <div className="w-full flex justify-center">
