@@ -4,6 +4,7 @@ import FlowerPicker from "@/components/FlowerPicker";
 import Preview from "@/components/preview/Preview";
 import WrapperPicker, { ColorPalette, COLOR_PALETTES } from "@/components/WrapperPicker";
 import Message from "@/components/Message";
+import { encodeConfig } from "@/lib/helpers/shareConfig";
 import { useState } from "react";
 import { Button } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
@@ -28,7 +29,7 @@ export default function Home() {
       msg: message,
     };
     
-    const encoded = btoa(JSON.stringify(config));
+    const encoded = encodeConfig(config);
     const url = `${window.location.origin}/bouquet?c=${encoded}`;
     return url;
   };

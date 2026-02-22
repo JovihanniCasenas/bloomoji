@@ -2,10 +2,22 @@
 
 import Preview from "@/components/preview/Preview";
 import { COLOR_PALETTES } from "@/components/WrapperPicker";
+import { decodeConfig } from "@/lib/helpers/shareConfig";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+
+type BouquetConfig = {
+  flowers?: Record<string, number>;
+  msg?: string;
+  palette?: {
+    name: string;
+    dome: string;
+    left: string;
+    right: string;
+  };
+};
 
 function BouquetContent() {
   const searchParams = useSearchParams();
@@ -18,7 +30,7 @@ function BouquetContent() {
 
   if (configParam) {
     try {
-      const decoded = JSON.parse(atob(configParam));
+      const decoded = decodeConfig<BouquetConfig>(configParam);
       flowerCounts = decoded.flowers || {};
       message = decoded.msg || "";
       
