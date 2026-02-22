@@ -11,16 +11,26 @@ export default function Preview({
   selectedPalette,
   message,
   isReceiver = false,
+  randomSeed,
+  onRandomize,
 }: {
   flowerCounts: Record<string, number>;
   selectedPalette: ColorPalette;
   message: string;
   isReceiver?: boolean;
+  randomSeed?: number;
+  onRandomize?: (seed: number) => void;
 }) {
-  const [randomSeed, setRandomSeed] = useState(0);
+  const [localRandomSeed, setLocalRandomSeed] = useState(0);
+  const currentRandomSeed = randomSeed ?? localRandomSeed;
 
   const handleRandomize = () => {
-    setRandomSeed(Math.floor(Math.random() * 10000));
+    const nextSeed = Math.floor(Math.random() * 10000);
+    if (onRandomize) {
+      onRandomize(nextSeed);
+      return;
+    }
+    setLocalRandomSeed(nextSeed);
   };
 
   return (
@@ -50,7 +60,7 @@ export default function Preview({
           domeColor={selectedPalette.domeColor}
           leftFlapColor={selectedPalette.leftFlapColor}
           rightFlapColor={selectedPalette.rightFlapColor}
-          randomSeed={randomSeed}
+          randomSeed={currentRandomSeed}
           cardLetter={message}
         />
       </div>

@@ -11,6 +11,7 @@ import { useRouter } from "next/navigation";
 type BouquetConfig = {
   flowers?: Record<string, number>;
   msg?: string;
+  seed?: number;
   palette?: {
     name: string;
     dome: string;
@@ -27,12 +28,14 @@ function BouquetContent() {
   let flowerCounts = {};
   let selectedPalette = COLOR_PALETTES[0];
   let message = "";
+  let randomSeed = 0;
 
   if (configParam) {
     try {
       const decoded = decodeConfig<BouquetConfig>(configParam);
       flowerCounts = decoded.flowers || {};
       message = decoded.msg || "";
+      randomSeed = decoded.seed || 0;
       
       if (decoded.palette) {
         selectedPalette = {
@@ -64,6 +67,7 @@ function BouquetContent() {
           flowerCounts={flowerCounts}
           selectedPalette={selectedPalette}
           message={message}
+          randomSeed={randomSeed}
           isReceiver
         />
         <div className="w-full flex justify-center">

@@ -15,6 +15,7 @@ export default function Home() {
   const [flowerCounts, setFlowerCounts] = useState<Record<string, number>>({});
   const [selectedPalette, setSelectedPalette] = useState<ColorPalette>(COLOR_PALETTES[0]);
   const [message, setMessage] = useState("");
+  const [randomSeed, setRandomSeed] = useState(0);
   const [copied, setCopied] = useState(false);
 
   const generateShareableLink = () => {
@@ -27,6 +28,7 @@ export default function Home() {
         right: selectedPalette.rightFlapColor,
       },
       msg: message,
+      seed: randomSeed,
     };
     
     const encoded = encodeConfig(config);
@@ -71,6 +73,7 @@ export default function Home() {
               setFlowerCounts({});
               setSelectedPalette(COLOR_PALETTES[0]);
               setMessage("");
+              setRandomSeed(0);
             }}
           >
             Start Over
@@ -95,7 +98,15 @@ export default function Home() {
             )}
             {key === "wrapping" && <WrapperPicker selectedPalette={selectedPalette} onPaletteChange={setSelectedPalette} />}
             {key === "message" && <Message message={message} onChangedMessage={setMessage} />}
-            {key === "preview" && <Preview flowerCounts={flowerCounts} selectedPalette={selectedPalette} message={message} />}
+            {key === "preview" && (
+              <Preview
+                flowerCounts={flowerCounts}
+                selectedPalette={selectedPalette}
+                message={message}
+                randomSeed={randomSeed}
+                onRandomize={setRandomSeed}
+              />
+            )}
           </div>
         ))}
         
