@@ -18,6 +18,12 @@ export default function Wrapper({
   flowerCounts = {},
   randomSeed = 0,
 }: WrapperProps) {
+  // Seeded random number generator for consistent positions and ordering
+  const seededRandom = (seed: number) => {
+    const x = Math.sin(seed) * 10000;
+    return x - Math.floor(x);
+  };
+
   // Generate array of flowers to display based on counts
   const flowersToDisplay: string[] = [];
   Object.entries(flowerCounts).forEach(([name, count]) => {
@@ -28,6 +34,16 @@ export default function Wrapper({
       }
     }
   });
+
+  // Shuffle flower render order so layering (top/bottom) is also randomized
+  const shuffledFlowersToDisplay = [...flowersToDisplay];
+  for (let i = shuffledFlowersToDisplay.length - 1; i > 0; i--) {
+    const randomIndex = Math.floor(seededRandom(randomSeed + i * 97) * (i + 1));
+    [shuffledFlowersToDisplay[i], shuffledFlowersToDisplay[randomIndex]] = [
+      shuffledFlowersToDisplay[randomIndex],
+      shuffledFlowersToDisplay[i],
+    ];
+  }
 
   // Check if a point is inside the back panel area (including the edge)
   const isInsideBackPanel = (x: number, y: number): boolean => {
@@ -63,12 +79,6 @@ export default function Wrapper({
     }
     
     return false;
-  };
-
-  // Seeded random number generator for consistent positions
-  const seededRandom = (seed: number) => {
-    const x = Math.sin(seed) * 10000;
-    return x - Math.floor(x);
   };
 
   // Generate deterministic positions for flowers within the back panel
@@ -146,8 +156,8 @@ export default function Wrapper({
       />
 
       {/* Render flowers on top of everything */}
-      {flowersToDisplay.map((emoji, index) => {
-        const { x, y, rotation } = getFlowerPosition(index, flowersToDisplay.length);
+      {shuffledFlowersToDisplay.map((emoji, index) => {
+        const { x, y, rotation } = getFlowerPosition(index, shuffledFlowersToDisplay.length);
         const size = 80;
         const half = size / 2;
         return (
