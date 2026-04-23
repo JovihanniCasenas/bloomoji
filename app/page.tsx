@@ -5,7 +5,7 @@ import Preview from "@/components/preview/Preview";
 import WrapperPicker, { ColorPalette, COLOR_PALETTES } from "@/components/WrapperPicker";
 import Message from "@/components/Message";
 import { encodeConfig } from "@/lib/helpers/shareConfig";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@mui/material";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
@@ -17,6 +17,16 @@ export default function Home() {
   const [message, setMessage] = useState("");
   const [randomSeed, setRandomSeed] = useState(0);
   const [copied, setCopied] = useState(false);
+  const [shareCount, setShareCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/analytics/event-count?event=share_button_click")
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === "number") setShareCount(data.count);
+      })
+      .catch(() => {});
+  }, []);
 
   const generateShareableLink = () => {
     const config = {
@@ -63,6 +73,16 @@ export default function Home() {
           <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
             A virtual emoji flower bouquet maker
           </div>
+          {shareCount !== null && (
+            <div className="flex items-center gap-1.5 mt-1">
+              <span
+                className="inline-flex items-center gap-1 py-0.5 rounded-full text-xs font-medium"
+                style={{ color: "#5D4E37" }}
+              >
+                💐 {shareCount.toLocaleString()} bouquets shared
+              </span>
+            </div>
+          )}
         </div>
         <div className="sm:self-start">
           <Button

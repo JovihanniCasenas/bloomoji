@@ -7,6 +7,7 @@ import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 type BouquetConfig = {
   flowers?: Record<string, number>;
@@ -24,6 +25,16 @@ function BouquetContent() {
   const searchParams = useSearchParams();
   const configParam = searchParams.get("c");
   const router = useRouter();
+  const [viewCount, setViewCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    fetch("/api/analytics/event-count?event=view_bouquet")
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === "number") setViewCount(data.count);
+      })
+      .catch(() => {});
+  }, []);
 
   let flowerCounts = {};
   let selectedPalette = COLOR_PALETTES[0];
@@ -57,6 +68,11 @@ function BouquetContent() {
           <h1 className="text-4xl font-bold mb-2" style={{ color: "#5D4E37" }}>
             Someone just sent you a bouquet!
           </h1>
+          {viewCount !== null && (
+            <p className="text-xs mt-2" style={{ color: "#5D4E37" }}>
+              💐 {viewCount.toLocaleString()} bouquet views on Bloomoji
+            </p>
+          )}
           {message && (
             <p className="text-lg mt-4" style={{ color: "#8B7355" }}>
               {message}
